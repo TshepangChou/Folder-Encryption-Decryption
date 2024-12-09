@@ -1,0 +1,77 @@
+This codes are for securing your folders by Encrypting and Decrypting.
+
+I will use Visual Studio code for the implementation.
+I will use AES-256 encryption in Python.
+
+AES (Advanced Encryption Standard) is a powerful algorithm used 
+by governments and security experts alike. 
+We will use a 256-bit key for encryption 
+and this key will must be required for decryption. 
+It will add extra strength to our encryption process.
+Encryption is a great way to protect information.
+
+
+Requirements:
+To run the programs, you’ll need Python 3 
+and
+the pyzipper library installed:
+
+"pip install pyzipper"
+
+
+Steps:
+1.Create a new Python file (e.g., encrypt_folder.py) using your favorite code editor.
+2.Copy and paste the following code into the file.
+3.Replace the placeholders with your desired values:
+	3.1)input_folder: Path to the folder you want to encrypt.
+	3.2)output_file: Path and name for the encrypted zip file (e.g., encrypted_folder.zip).
+	3.3)password: 32 bytes (256-bit) long encryption password (You can use this sample password for a demo: ‘OcIuSk8dGjHEzNYtmo4pqZDQBFsP3rlU’).
+
+
+
+
+Encrypting a folder:
+
+import os
+import pyzipper
+def encrypt_folder(input_folder, output_file, password):
+    with pyzipper.AESZipFile(output_file, 'w', compression=pyzipper.ZIP_LZMA) as zf:
+        zf.setpassword(password.encode('utf-8'))
+        zf.setencryption(pyzipper.WZ_AES, nbits=256)
+        
+        for foldername, subfolders, filenames in os.walk(input_folder):
+            for filename in filenames:
+                file_path = os.path.join(foldername, filename)
+                arcname = os.path.relpath(file_path, input_folder)
+                zf.write(file_path, arcname=arcname)
+if __name__ == "__main__":
+    input_folder = 'Folder_Path'
+    output_file = 'encrypted_folder.zip'
+    # Password must be 32 bytes (256-bit) long
+    password = 'Your_Password_Here'
+    encrypt_folder(input_folder, output_file, password)
+    print(f"Folder '{input_folder}' has been encrypted as '{output_file}'")
+
+
+
+
+Decrypting the Encrypted Zip File:
+
+import pyzipper
+def decrypt_zip(input_file, output_folder, password):
+    with pyzipper.AESZipFile(input_file) as zf:
+        zf.setpassword(password.encode('utf-8'))
+        zf.extractall(path=output_folder)
+if __name__ == "__main__":
+    input_file = 'encrypted.zip'
+    output_folder = 'decrypted_folder'
+    password = 'Your_Password_Here'
+
+    decrypt_zip(input_file, output_folder, password)
+    print(f"{input_file} has been decrypted into folder '{output_folder}'")
+
+
+
+
+
+
